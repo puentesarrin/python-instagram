@@ -53,6 +53,7 @@ def bind_method(**config):
         response_type = config.get("response_type", "list")
         include_secret = config.get("include_secret", False)
         objectify_response = config.get("objectify_response", True)
+        exclude_format = config.get('exclude_format', False)
 
         def __init__(self, api, *args, **kwargs):
             self.api = api
@@ -101,10 +102,8 @@ def bind_method(**config):
 
                 self.path = self.path.replace(variable, value)
 
-            if self.api.format:
+            if self.api.format and not self.exclude_format:
                 self.path = self.path + '.%s' % self.api.format
-            else:
-                self.path = self.path
 
         def _build_pagination_info(self, content_obj):
             """Extract pagination information in the desired format."""
@@ -114,7 +113,7 @@ def bind_method(**config):
             if self.pagination_format == 'dict':
                 return pagination
             raise Exception('Invalid value for pagination_format: %s' % self.pagination_format)
-
+          
         def _do_api_request(self, url, method="GET", body=None, headers=None):
             headers = headers or {}
             if self.signature and self.api.client_ips != None and self.api.client_secret != None:
@@ -122,6 +121,7 @@ def bind_method(**config):
                 ips = self.api.client_ips
                 signature = hmac.new(secret, ips, sha256).hexdigest()
                 headers['X-Insta-Forwarded-For'] = '|'.join([ips, signature])
+
             response, content = OAuth2Request(self.api).make_request(url, method=method, body=body, headers=headers)
             try:
                 content_obj = simplejson.loads(content)

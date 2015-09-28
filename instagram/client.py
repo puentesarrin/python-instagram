@@ -26,7 +26,7 @@ class InstagramAPI(oauth2.OAuth2API):
             self.format = format
         else:
             raise Exception("Unsupported format")
-        super(InstagramAPI, self).__init__(*args, **kwargs)
+        super(InstagramAPI, self).__init__(**kwargs)
 
     media_popular = bind_method(
                 path="/media/popular",
@@ -42,7 +42,8 @@ class InstagramAPI(oauth2.OAuth2API):
                 path="/media/shortcode/{shortcode}",
                 accepts_parameters=['shortcode'],
                 response_type="entry",
-                root_class=MediaShortcode)
+                root_class=MediaShortcode,
+                exclude_format=True)
 
 
     media_likes = bind_method(
@@ -106,7 +107,7 @@ class InstagramAPI(oauth2.OAuth2API):
 
     user_recent_media = bind_method(
                 path="/users/{user_id}/media/recent",
-                accepts_parameters=MEDIA_ACCEPT_PARAMETERS + ['user_id'],
+                accepts_parameters=MEDIA_ACCEPT_PARAMETERS + ['user_id', 'min_id', 'max_timestamp', 'min_timestamp'],
                 root_class=Media,
                 paginates=True)
 

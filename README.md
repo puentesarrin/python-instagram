@@ -6,8 +6,9 @@ A Python 2/3 client for the Instagram REST and Search APIs
 
 Installation
 -----
+```
 pip install python-instagram
-
+```
 Requires
 -----
   * httplib2
@@ -53,7 +54,8 @@ Once you have an access token (whether via the script or from the user flow), yo
 from instagram.client import InstagramAPI
 
 access_token = "YOUR_ACCESS_TOKEN"
-api = InstagramAPI(access_token=access_token)
+client_secret = "YOUR_CLIENT_SECRET"
+api = InstagramAPI(access_token=access_token, client_secret=client_secret)
 recent_media, next_ = api.user_recent_media(user_id="userid", count=10)
 for media in recent_media:
    print media.caption.text
@@ -123,6 +125,15 @@ photos = []
 for media in recent_media:
     photos.append('<img src="%s"/>' % media.images['thumbnail'].url)
 ```            
+
+And an example of exhaustively pursuing a paginated endpoint:
+
+``` python
+follows, next_ = api.user_follows()
+while next_:
+    more_follows, next_ = api.user_follows(with_next_url=next_)
+    follows.extend(more_follows)
+```
 
 Users: http://instagr.am/developer/endpoints/users/
     
@@ -207,6 +218,15 @@ except InstagramAPIError as e:
    if (e.status_code == 400):
       print "\nUser is set to private."
 ```
+
+Trouble Shooting
+------
+
+If you get an error of a module not being defined during the Instagram import call, this might update a necessary package.
+```
+sudo pip install --upgrade six
+```
+
 Sample app
 ------
 This repository includes a one-file sample app that uses the bottle framework and demonstrates
