@@ -68,6 +68,7 @@ def bind_method(**config):
             self.parameters = {}
             self._build_parameters(args, kwargs)
             self._build_path()
+            self.objectify_response = kwargs.pop("objectify_response", self.objectify_response)
 
         def _build_parameters(self, args, kwargs):
             # via tweepy https://github.com/joshthecoder/tweepy/
