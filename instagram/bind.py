@@ -148,7 +148,7 @@ def bind_method(**config):
             self.api.x_ratelimit = response.get("x-ratelimit-limit",None)
             if status_code == 200:
                 if not self.objectify_response:
-                    return content_obj, None
+                    return content_obj, self._build_pagination_info(content_obj)
 
                 if self.response_type == 'list':
                     for entry in content_obj['data']:
