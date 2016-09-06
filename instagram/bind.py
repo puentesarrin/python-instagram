@@ -109,7 +109,7 @@ def bind_method(**config):
 
         def _build_pagination_info(self, content_obj):
             """Extract pagination information in the desired format."""
-            pagination = content_obj.get('pagination', {})
+            pagination = content_obj.get('pagination') or {}
             # prepare it for signed requests turned on
             if pagination.get('next_url'):
                 parsed_url = urlparse.urlparse(pagination.get('next_url'))
@@ -126,7 +126,7 @@ def bind_method(**config):
             if self.pagination_format == 'dict':
                 return pagination
             raise Exception('Invalid value for pagination_format: %s' % self.pagination_format)
-          
+
         def _do_api_request(self, url, method="GET", body=None, headers=None):
             headers = headers or {}
             if self.signature and self.api.client_ips != None and self.api.client_secret != None:
